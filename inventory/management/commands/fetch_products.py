@@ -31,7 +31,7 @@ class Command(BaseCommand):
             self.stderr.write("❌ Header 'Date' tidak ditemukan!")
             return
 
-        # Parse server date (GMT) dan convert ke GMT+5
+        # Parse server date (GMT) dan convert ke GMT+7
         server_date_str = get_response.headers["Date"]
         self.stdout.write(f"📅 Server Date (GMT): {server_date_str}")
         
@@ -40,10 +40,10 @@ class Command(BaseCommand):
             "%a, %d %b %Y %H:%M:%S GMT"
         )
 
-        # Server menggunakan GMT+5 untuk credentials
-        server_date = server_date_gmt + timedelta(hours=5)
+        # Server menggunakan GMT+7 untuk credentials (SESUAI DEBUG)
+        server_date = server_date_gmt + timedelta(hours=7)
         
-        self.stdout.write(f"📅 Server Date (GMT+5): {server_date.strftime('%d-%m-%Y %H:%M:%S')}")
+        self.stdout.write(f"📅 Server Date (GMT+7): {server_date.strftime('%d-%m-%Y %H:%M:%S')}")
 
         # Extract date components
         day = server_date.day
@@ -57,8 +57,8 @@ class Command(BaseCommand):
         self.stdout.write("STEP 2: Generate credentials")
         self.stdout.write("="*70)
 
-        # Username: tesprogrammerDDMMYYC02 (dengan leading zero)
-        username = f"tesprogrammer{day:02d}{month:02d}{year_2digit}C02"
+        # Username: tesprogrammerDDMMYYC00 (SESUAI DEBUG - suffix C00)
+        username = f"tesprogrammer{day:02d}{month:02d}{year_2digit}C00"
 
         # Password: bisacoding-DD-MM-YY (DENGAN leading zero!)
         password_raw = f"bisacoding-{day:02d}-{month:02d}-{year_2digit}"
@@ -140,14 +140,7 @@ class Command(BaseCommand):
 
         for item in json_data["data"]:
             try:
-                # PENTING: API response struktur:
-                # {
-                #   "id_produk": 1,
-                #   "nama_produk": "...",
-                #   "harga": 50000,
-                #   "kategori": "Nama Kategori",  // BUKAN kategori_id!
-                #   "status": "bisa dijual"        // BUKAN status_id!
-                # }
+
 
                 # Ambil atau buat kategori berdasarkan NAMA
                 kategori_nama = item.get("kategori", "Unknown")
