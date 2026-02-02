@@ -56,7 +56,7 @@
                         <a href="{% url 'produk_list' %}" class="btn btn-secondary">
                             <i class="bi bi-x-circle"></i> Batal
                         </a>
-                        <button type="submit" class="btn btn-danger" id="deleteButton">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal">
                             <i class="bi bi-trash"></i> Ya, Hapus Produk
                         </button>
                     </div>
@@ -65,35 +65,51 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Konfirmasi -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill"></i> PERHATIAN!
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2"><strong>Apakah Anda benar-benar yakin ingin menghapus produk ini?</strong></p>
+                <hr>
+                <p class="mb-1"><strong>Produk:</strong> {{ produk.nama_produk }}</p>
+                <p class="mb-1"><strong>ID:</strong> {{ produk.id_produk }}</p>
+                <hr>
+                <p class="text-danger mb-0"><small><strong>Tindakan ini tidak dapat dibatalkan!</strong></small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Batal
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">
+                    <i class="bi bi-trash"></i> Ya, Hapus Sekarang
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Konfirmasi sebelum hapus dengan JavaScript
     document.addEventListener('DOMContentLoaded', function() {
         const deleteForm = document.getElementById('deleteForm');
-        const deleteButton = document.getElementById('deleteButton');
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 
-        deleteForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+        confirmDeleteButton.addEventListener('click', function() {
+            // Disable button untuk mencegah double submit
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menghapus...';
             
-            // Tampilkan konfirmasi
-            const confirmed = confirm(
-                '⚠️ PERHATIAN!\n\n' +
-                'Apakah Anda benar-benar yakin ingin menghapus produk ini?\n\n' +
-                'Produk: {{ produk.nama_produk }}\n' +
-                'ID: {{ produk.id_produk }}\n\n' +
-                'Tindakan ini tidak dapat dibatalkan!'
-            );
-
-            if (confirmed) {
-                // Disable button untuk mencegah double submit
-                deleteButton.disabled = true;
-                deleteButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menghapus...';
-                
-                // Submit form
-                this.submit();
-            }
+            // Submit form
+            deleteForm.submit();
         });
     });
 </script>
